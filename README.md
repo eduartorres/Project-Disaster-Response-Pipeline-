@@ -5,7 +5,7 @@ About This Project is part of Data Science Nanodegree Program by Udacity. The pr
 
 The repo is a project in the Udacity Data Scientist Nanodegree Program.
 
-The dataset (in the data folder) comes from [appen](https://appen.com/) which contains about 26k text messages from news, social media, and some other sources when some disasters happened.
+The dataset (in the data folder) comes from [appen](https://appen.com/) which contains about 26k text messages from news, social media, and some other sources when some disasters happened. The project aim is to classify a disaster text messages into several categories which then can be transmited to the responsible entity.
 
 ## Instructions to run the code:
 1. Run the following commands in the project's root directory to set up the database and model.
@@ -18,7 +18,7 @@ The dataset (in the data folder) comes from [appen](https://appen.com/) which co
 
 3. Go to http://0.0.0.0:3001/
 
-## Dependencies
+## Requirements
 - Python 3.5+
 - Machine Learning Libraries: NumPy, SciPy, Pandas, Sciki-Learn
 - Natural Language Process Libraries: NLTK
