@@ -25,3 +25,8 @@ The dataset (in the data folder) comes from [appen](https://appen.com/) which co
 - SQLlite Database Libraqries: SQLalchemy
 - Model Loading and Saving Library: Pickle
 - Web App and Data Visualization: Flask, Plotly
+
+## Licensing, Authors, Acknowledgements
+This app was completed as part of the [Udacity Data Scientist Nanodegree](https://www.udacity.com/course/data-scientist-nanodegree--nd025).
+
+As additional material I used an article published by Jin Tong entitled: ["Learning from Udacity Disaster Response Projects"](https://medium.com/@jtatl/udacity-disaster-response-pipeline-project-learning-be2be43878e6), which was of great help for the development of this project. 
