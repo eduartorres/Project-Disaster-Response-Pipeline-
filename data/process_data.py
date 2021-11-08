@@ -5,97 +5,111 @@ Created on Sat Oct 16 16:51:36 2021
 @author: FELIPE
 """
 
+# Note: Read the header before running
+# =============================================================================
 # >>> Project: Disaster Response Pipeline (Udacity - Data Science Nanodegree) <<<
 
 # How to execute this file
 # Sample Script Syntax:
 # > python process_data.py <path to messages csv file> <path to categories csv file> <path to sqllite destination db>
 
-# Sample Script Execution:
+# Sample script execution:
 # > python process_data.py disaster_messages.csv disaster_categories.csv disaster_response_db.db
 
-# Arguments Description:
-#    1. Path to the CSV file containing messages (disaster_messages.csv)
-#    2. Path to the CSV file containing categories (disaster_categories.csv)
-#    3. Path to SQLite destination database (disaster_response_db.db)
-
+# =============================================================================
 
 # ETL PIPELINE PREPARATION
 
 # Loading libraries
-import os
-import sys
-import numpy as np
+
 import pandas as pd
 from sqlalchemy import create_engine
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+import sys
 
+# ============================================================================
 # Module to load messages
-def load_messages_with_categories(messages_filepath, categories_filepath):
+def load_mess_categ(dataset_messages, dataset_category):
     """
-    Load Messages Data with Categories Function
+    >>> This loads messages dataset with categories dataset
     
-    Arguments:
-        messages_filepath: Path to the CSV file containing messages
-        categories_filepath: Path to the CSV file containing categories
-    Output:
-        df: Combined data containing messages and categories
+    >>> Function arguments:
+        - dataset_messages: Path to the csv file containing messages
+        - dataset_category: Path to the csv file containing categories
+    
+    >>> Function output:
+        df: Merged dataset with the messages and categories datasets
     """
     
-    messages = pd.read_csv(messages_filepath)
-    categories = pd.read_csv(categories_filepath)
-    df = pd.merge(messages,categories,on='id')
+    messages_dataset = pd.read_csv(dataset_messages)
+    categories_dataset = pd.read_csv(dataset_category)
+    df = messages_dataset.merge(categories_dataset, on='id')
     return df 
 
+# ============================================================================
+
 # Module to clean categories data
-def clean_categories_data(df):
+def clean_data_cat(df):
     """
-    Clean Categories Data Function
+    >>> This function cleans categories data
     
-    Arguments:
-        df: Combined data containing messages and categories
-    Outputs:
-        df: Combined data containing messages and categories with categories cleaned up
+    >>> Function arguments:
+        df: merged dataset with messages and categories
+        
+    >>> Function outputs:
+        df: merged dataset containing messages and categories with categories
     """
     
-    # Split the categories
+    # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(pat=';',expand=True)
     
-    #Fix the categories columns name
+    # categories columns name
     row = categories.iloc[[1]]
     category_colnames = [category_name.split('-')[0] for category_name in row.values[0]]
     categories.columns = category_colnames
     
+    # iterating through the category columns in df to keep only the last character of each string
     for column in categories:
         categories[column] = categories[column].str[-1]
         categories[column] = categories[column].astype(np.int)
     
+    # drop the original categories column from `df`
     df = df.drop('categories',axis=1)
+    
+    # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df,categories],axis=1)
     df = df.drop_duplicates()
     
     return df
 
+# ============================================================================
+
 # Module to save data to SQLite Database
-def save_data_to_db(df, database_filename):
+def save_data_database(df, database_filepath):
     """
-    Save Data to SQLite Database Function
+    >>> Save the clean dataset into an sqlite database
     
-    Arguments:
-        df: Combined data containing messages and categories with categories cleaned up
-        database_filename: Path to SQLite destination database
+    >>> Function arguments:
+        df: Merged data containing messages and categories with categories cleaned up
+        database_filepath: Path to SQLite database
     """
     
-    engine = create_engine('sqlite:///'+ database_filename)
-    table_name = database_filename.replace(".db","") + "_table"
+    engine = create_engine('sqlite:///'+ database_filepath)
+    # Naming the database table
+    table_name = database_filepath.replace(".db","") + "_table"
     df.to_sql(table_name, engine, index=False, if_exists='replace')
+    
+# ============================================================================
 
 # Main module that executes the data processing functions above
 def main():
     """
-    There are three primary actions taken by this function:
-        1) Load Messages Data with Categories
-        2) Clean Categories Data
-        3) Save Data to SQLite Database
+    Primary function:
+        >>> loads messages and categories data
+        >>> cleans up categories Data
+        >>> Save data to SQLite database
     """
     
     # Print the system arguments
@@ -104,28 +118,33 @@ def main():
     # Execute the ETL pipeline if the count of arguments is matching to 4
     if len(sys.argv) == 4:
 
-        messages_filepath, categories_filepath, database_filepath = sys.argv[1:] # Extract the parameters in relevant variable
+        # parameters of important variables 
+        dataset_messages, dataset_category, database_filepath = sys.argv[1:] 
+        
+        # =====================================================================
 
         print('Loading messages data from {} ...\nLoading categories data from {} ...'
-              .format(messages_filepath, categories_filepath))
+              .format(dataset_messages, dataset_category))
         
-        df = load_messages_with_categories(messages_filepath, categories_filepath)
+        df = load_mess_categ(dataset_messages, dataset_category)
+        
+        # =====================================================================
 
-        print('Cleaning categories data ...')
-        df = clean_categories_data(df)
+        print('Cleaning up data...')
+        df = clean_data_cat(df)
+        
+        # =====================================================================
         
         print('Saving data to SQLite DB : {}'.format(database_filepath))
-        save_data_to_db(df, database_filepath)
+        save_data_database(df, database_filepath)
         
-        print('Cleaned data has been saved to database!')
+        print('Process status: cleaned data has been saved to database successfully!')
+        
+        # ====================================================================
     
-    else: # Print the help message so that user can execute the script with correct parameters
-        print("Please provide the arguments correctly: \nSample Script Execution:\n\
-> python process_data.py disaster_messages.csv disaster_categories.csv disaster_response_db.db \n\
-Arguments Description: \n\
-1) Path to the CSV file containing messages (e.g. disaster_messages.csv)\n\
-2) Path to the CSV file containing categories (e.g. disaster_categories.csv)\n\
-3) Path to SQLite destination database (e.g. disaster_response_db.db)")
+    else:
+        print("Please provide the arguments how is described in the: \nSample script execution:\n\
+> python process_data.py disaster_messages.csv disaster_categories.csv disaster_response_db.db")
 
 if __name__ == '__main__':
     main()

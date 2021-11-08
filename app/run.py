@@ -4,6 +4,19 @@ Created on Sun Oct 17 19:16:27 2021
 
 @author: FELIPE
 """
+# Note: Read the header before running
+# =============================================================================
+# >>> Project: Disaster Response Pipeline (Udacity - Data Science Nanodegree) <<<
+
+# Sample script execution:
+# > python run.py
+
+# =============================================================================
+
+# FLASK WEB APP
+
+# Loading libraries
+
 import json
 import plotly
 import pandas as pd
@@ -24,26 +37,7 @@ from nltk import pos_tag, word_tokenize
 import nltk
 from sklearn.base import BaseEstimator, TransformerMixin
 
-
 app = Flask(__name__)
-
-class StartingVerbExtractor(BaseEstimator, TransformerMixin):
-
-    def starting_verb(self, text):
-        sentence_list = nltk.sent_tokenize(text)
-        for sentence in sentence_list:
-            pos_tags = nltk.pos_tag(tokenize(sentence))
-            first_word, first_tag = pos_tags[0]
-            if first_tag in ['VB', 'VBP'] or first_word == 'RT':
-                return True
-        return False
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        X_tagged = pd.Series(X).apply(self.starting_verb)
-        return pd.DataFrame(X_tagged)
 
 def tokenize(text):
     tokens = word_tokenize(text)
@@ -56,13 +50,18 @@ def tokenize(text):
 
     return clean_tokens
 
+# ============================================================================
+
 # loading data
 engine = create_engine('sqlite:///../data/disaster_response_db.db')
 df = pd.read_sql_table('disaster_response_db_table', engine)
 
+# ============================================================================
+
 # load model
 model = joblib.load("../models/classifier.pkl")
 
+# ============================================================================
 
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
@@ -81,7 +80,7 @@ def index():
     # create visuals
     # genre graph and category graph 
     graphs = [
-            # GRAPH 1 - genre graph
+            # Graph - genre graph
         {
             'data': [
                 Bar(
@@ -102,7 +101,7 @@ def index():
                 }
             }
         },
-            # GRAPH 2 - category graph    
+            # Graph - category graph    
         {
             'data': [
                 Bar(
@@ -133,6 +132,7 @@ def index():
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
 
+# ============================================================================
 
 # web page that handles user query and displays model results
 @app.route('/go')
