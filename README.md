@@ -26,6 +26,29 @@ The dataset (in the data folder) comes from [appen](https://appen.com/) which co
 - Model Loading and Saving Library: Pickle
 - Web App and Data Visualization: Flask, Plotly
 
+## Files Descriptions
+The files structure is arranged as below:
+
+app
+- | - templates
+- | |- master.html # main page of web app
+- | |- go.html # classification result page of web app
+- |- run.py # Flask file that runs app
+
+data
+- |- disaster_categories.csv # data to process
+- |- disaster_messages.csv # data to process
+- |- process_data.py
+- |- disaster_response_db.db # database to save clean data to
+- |- ETL Pipeline Preparation.ipynb
+
+models
+- |- train_classifier.py
+- |- classifier.pkl # saved model
+- |- ML Pipeline Preparation.ipynb
+
+README.md
+
 ## Licensing, Authors, Acknowledgements
 This app was completed as part of the [Udacity Data Scientist Nanodegree](https://www.udacity.com/course/data-scientist-nanodegree--nd025).
 
