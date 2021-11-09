@@ -79,6 +79,11 @@ def load_data_db(database_filepath):
     # Dropping 'child_alone' column
     df = df.drop(['child_alone'],axis=1)
     
+    # If you try to look at the related column then you will find that it contains 3 unique values (0, 1, 2)
+    # which makes this category a multiclass rather than binary.
+    # df.groupby("related").count()
+    # df.related.unique()
+    
     # Replacing 2 with 0 to consider it a valid response
     df["related"].replace({2: 0}, inplace=True)
     
